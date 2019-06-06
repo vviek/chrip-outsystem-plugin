@@ -86,23 +86,29 @@ public class ChripPlugin extends CordovaPlugin implements ConnectEventListener {
 
     private void registerAsReceiver() {
         if (chirp == null) {
-            chirp = new ChirpConnect(cordova.getActivity(), cordova.getActivity().getResources().getString(R.string.CHIRP_APP_SECRET), cordova.getActivity().getResources().getString(R.string.CHIRP_APP_KEY));
+            chirp = new ChirpConnect(cordova.getActivity(),cordova.getActivity().getResources().getString(R.string.CHIRP_APP_KEY), cordova.getActivity().getResources().getString(R.string.CHIRP_APP_SECRET) );
             chirp.setConfig(cordova.getActivity().getResources().getString(R.string.CHIRP_APP_CONFIG));
+            chirp.start(true, true);
+
         }
         chirp.setListener(this);
-        
+
     }
 
     private void sendData() {
         try {
-            chirp = new ChirpConnect(cordova.getActivity(), cordova.getActivity().getResources().getString(R.string.CHIRP_APP_SECRET), cordova.getActivity().getResources().getString(R.string.CHIRP_APP_KEY));
-            ChirpError errorConfig = chirp.setConfig(cordova.getActivity().getResources().getString(R.string.CHIRP_APP_CONFIG));
-            if (errorConfig.getCode() != 0) {
-                JSONObject jsonObject = new JSONObject();
-                jsonObject.put("Code", errorConfig.getCode());
-                jsonObject.put("Message", errorConfig.getMessage());
-                context.error(jsonObject);
-                return;
+            if (chirp == null) {
+
+                chirp = new ChirpConnect(cordova.getActivity(), cordova.getActivity().getResources().getString(R.string.CHIRP_APP_KEY), cordova.getActivity().getResources().getString(R.string.CHIRP_APP_SECRET));
+                ChirpError errorConfig = chirp.setConfig(cordova.getActivity().getResources().getString(R.string.CHIRP_APP_CONFIG));
+                chirp.start(true, true);
+                if (errorConfig.getCode() != 0) {
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("Code", errorConfig.getCode());
+                    jsonObject.put("Message", errorConfig.getMessage());
+                    context.error(jsonObject);
+                    return;
+                }
             }
             byte[] payload = dataToSend.getBytes(Charset.forName("UTF-8"));
             ChirpError error = chirp.send(payload);
