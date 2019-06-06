@@ -10,7 +10,10 @@
     <keywords>cordova,android,chrip</keywords>
     <repo>https://github.com/vviek/chrip-outsystem-plugin.git</repo>
     <issue>https://github.com/vviek/chrip-outsystem-plugin/issues</issue>
-  
+    <preference name="CHIRP_APP_KEY" />
+    <preference name="CHIRP_APP_SECRET" />
+    <preference name="CHIRP_APP_CONFIG" />
+
     <engines>
         <engine name="cordova" version=">=3.0.0"/>
     </engines>
@@ -19,6 +22,14 @@
         <clobbers target="window.plugins.chripPlugin" />
     </js-module>
     <platform name="android">
+
+
+     <config-file target="res/values/strings.xml" parent="/*">
+            <string name="CHIRP_APP_KEY">$CHIRP_APP_KEY</string>
+            <string name="CHIRP_APP_SECRET">$CHIRP_APP_SECRET</string>
+            <string name="CHIRP_APP_CONFIG">$CHIRP_APP_CONFIG</string>
+     </config-file>
+
         <config-file target="AndroidManifest.xml" parent="/*">
             <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
             <uses-permission android:name="android.permission.RECORD_AUDIO" />
