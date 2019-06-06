@@ -10,6 +10,8 @@ import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.PermissionHelper;
 import org.apache.cordova.PluginResult;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -17,17 +19,17 @@ import org.json.JSONObject;
 import java.nio.charset.Charset;
 
 import io.chirp.connect.ChirpConnect;
+import io.chirp.connect.interfaces.ConnectEventListener;
 import io.chirp.connect.models.ChirpError;
 
-public class ChripPlugin extends CordovaPlugin {
+public class ChripPlugin extends CordovaPlugin implements ConnectEventListener {
     private static final String SET_CONFIGRATION = "setConfigration";
     private static final String CHECK_PERMISSION = "checkPermission";
     private static final String SEND_DATA = "sendData";
+    private static final String REGISTER_AS_RECEIVER = "registerAsReceiver";
+
     ChirpConnect chirp;
     CallbackContext context;
-    String CHIRP_APP_KEY = "9ac1BE567bBa4b1E80bBaEE1d";
-    String CHIRP_APP_SECRET = "ED1703F312A9Cc7B0C5fFccd841BCaDFb880CDb518c9C6b23F";
-    String CHIRP_APP_CONFIG = "Tu4JDMLNjpLQ3HTPPn683R8SwyDiA1aeggalxbN9ZHDQ38nIR1011zMmq5bqzWzXj2CQtlLo7sxBjbvRKhASvbxJ9NJxZYlx8BHR2Nw136xe7aGKudU6VB4FWtOQK9AAuIysMHhNfD6aI/G5zh84YqoyU1rPOCQHf3UJHL5U/d4Rm5mdKEVxh3Xcl1r3aeq0g07ELuDN66J48mvE6Ndh+BPL8l0qUeGttpkmU10ECph9bpCvQn9Z8/h2nC5EFWS3NZe+8UT+xYQZiuDlfOxxGVBtTq05paax4duGGWiAjigkS0cqNcvJ7Emgevz7nHfLf7fKEsvqQCdrCevPiupMKGjm/0AbmDF5GKWINpNWi/pk8dz0s2yMasKJ075taj9kaalPlQSsebeHe0i1q2yyL5IEnd+VvWTwXmfbwsWPSpKsUf1lo5jx42Fm2+XBEZIoVZbXwhRIFBok50TvAZGDdf9uR4Q88Tz6jvnTau6C9E/UExYVBILL795MID8NfHfV9e2zQO96lejdiEX6JGnQ99mwAo5RuqlzymqG0sP7PgGyM7mxFrZEOeNoOHrlhMcnNas0bQ66G4+6RmwQf3x221i02NjW5szglxCzsCVvmy68rPRrBGIOrgxPasgTgwGaI+eniCLmBXjStXwgoDkKh3lloiUeey3ludY5wQxKbs/GVcuJtIPqBwjJx+DIvmxFY/IzETy3z95+KSIR/Xj1OxUqCgnlgQ9BVxR5VjOHw8bZfgdqVRrnkY5NhHiAkfbqhL5C2Azeww+vSLaswxzjsIZSPpGbFgxy80y+X/RZQmKg2+uFOIKE8z/JtitiHcR49IonWpfO20S4YNkWswpMZ9iYhEr/v2R1uDoW60KtFD5SSV7u0ULLP8tzHqg3/PcOtOXoYSM7iJhB9P9kbjfywj+IW0+ksQO5G11bkd6TRU7cy9CEEPODGx9fbJRVLMvrNoyt+gQbVx1LGcqQr4Hk3NDW16ketpuZM98fXEYStQvzAUnYw7kYL+P/yO8+M4rJ8BOPxQeDeELI8e32UQ73FZCKyc8fG2HROXTj8TiUb+cZcvyDi28FyfP0bIRtJNVG6BNdE3xVnKMEO4/9LTFmPe+kLpsX5mEPgLiWxhHNe5JMqla4DMJPQYUBRQVK/HNtuIDSQm86KCGoXBNnC+eh9ks6kD2NF7z4g7BJDTdkM/A767T1ZdaueB0lTzo5vhs7IZKe2VHczYgJ8raFvCkA0pfZJUq9AbUkh5RnPJVZiestLlgf98dnHKxfW2CYdDAm9xC1o/FESiJIODQFfhxn6LIEX4QjwtHWAQOLGVe4/TuDFJGwfxxwZvcUsKISVCQC81oJP7E4FLPe4/L/QqnztGLm3oEDxIFp6AQUFaqTHr6a58fGpbyAiTUeaSzfyxKXoDTsSw+hT02vQfrmwnEHgeJTNH8XrcB1doQf3W3CPQx0C7Dw5PGDu5w47FUpRnISWfh5iktIwu2TNNUV2tpWrwmGs8OgKbdzqodqVf3xLFesEKNj79hH7txcsUqnqlKTnhtvMNwbZo8Bx5wk7mVYzi341mCop8mOF/lLE6V94m5LqgPQ5k3wf2prG9rG1WwIGEVcUy8XHb6MOf4ez/HpjCKZ3JVqxTSMl4el4FRjfSeBGzOM9fwtGjq7ld7Z3ZV2I3EEPT3MBV9BAUxsHaznsPp4Q0x2yHnjJdUhhg6EvKloMGN3YopL/JceNFa1mlEg94kXU9Fpz1BNtpPDpidkBbd0uG63TkLWwE8i9niePHxK+HF542LfIIRk4k0bh/Wf1yKwzOOhk8VFbzk7Q3s3c/9YFgn5Gj3rnmC5YrPa9i5Qw69ivUV/BHt+RiQp0R6eWAoShHVAzfHxq9i5FyPEFwKgqImeRpo47Em4XdCxbctditibbbo1euIg5wJWMLLowTNgQoQ/zYpi1gs8a1+mVHiXFaqwJtX001brJ2pEBjmtN21z47+IJnABg/liwlyIzmuH/aLC8pNLFAOfYMCYuXh1AhF+eqD109Ebk32gpuz8RImeNcwieY8E39LPC6xInwhSZud58Vf2uE39fCMGsgllIoN14gNI/PMeNHk1xHHfvZzeFU/OGdx3x5DGucRp6nUW1aXzaDOnNzOkkHmJl+xsqpJ09Z9q9tnCurW5IeJRppLV8F1vovroo8rn3TTnbYTIr74KosardoDc3r97nAbMPWSNZfRn8VWkphfNQXIF2M09NZZltdrcW5KrLKjKtCT3KF4yCFtafrKfYBioqe8Vf3roCRJjdWCMBH37CIpW2WlEmbmccVTjlKnluQ2SIxaEe0azErFvaCiHb1dHX0+sNCFHxRxcOOIe5hq5EutehrvIvSrteoGJuWpHOkdp/jztq2mm7P31MoB52EfYh/4YeFSSVjj3+BT335Gb0i5Kw6Fps9sz0tP6ndOFd+zKFXNlyv0PEk+JQbU5oymsdAim+pRgtIT95S3utevGqJzruSN9DKwKKEfJNieeSrXq4aqEwjs5H3BIwrcTwrvSUXVallEN3sBhRII4Trc7NDl/KHacHxhCIFQkJUqX2ULDOO7eDyEV8eOt94IEJq9uhOmQmcMDnQXXLzJj2VMENOk=";
 
     String[] permissions = {Manifest.permission.RECORD_AUDIO};
 
@@ -39,10 +41,10 @@ public class ChripPlugin extends CordovaPlugin {
 
         switch (action) {
             case SET_CONFIGRATION:
-                setConfigration(callbackContext);
+                setConfigration(callbackContext,args);
                 break;
             case CHECK_PERMISSION:
-                startSDK(callbackContext);
+                checkPermission(callbackContext);
                 break;
             case SEND_DATA:
                 try {
@@ -52,11 +54,19 @@ public class ChripPlugin extends CordovaPlugin {
                 }
                 break;
 
+            case REGISTER_AS_RECEIVER:
+                registerAsReceiver();
+
+                break;
 
         }
 
 
         return true;
+    }
+
+    private void registerAsReceiver() {
+        chirp.setListener(this);
     }
 
     private void sendData(CallbackContext callbackContext, String dataToSend) {
@@ -65,7 +75,6 @@ public class ChripPlugin extends CordovaPlugin {
 
             ChirpError error = chirp.send(payload);
             JSONObject jsonObject = new JSONObject();
-
             jsonObject.put("Code", error.getCode());
             jsonObject.put("Message", error.getMessage());
 
@@ -76,7 +85,7 @@ public class ChripPlugin extends CordovaPlugin {
 
     }
 
-    private void startSDK(CallbackContext callbackContext) {
+    private void checkPermission(CallbackContext callbackContext) {
 
         if (hasPermisssion()) {
             PluginResult r = new PluginResult(PluginResult.Status.OK);
@@ -86,12 +95,15 @@ public class ChripPlugin extends CordovaPlugin {
         }
     }
 
-    private void setConfigration(CallbackContext callbackContext) {
+    private void setConfigration(CallbackContext callbackContext, JSONArray args) {
 
         try {
 
-            chirp = new ChirpConnect(cordova.getActivity(),CHIRP_APP_KEY, CHIRP_APP_SECRET);
-            ChirpError error = chirp.setConfig(CHIRP_APP_CONFIG);
+            //chirp = new ChirpConnect(cordova.getActivity(), CHIRP_APP_KEY, CHIRP_APP_SECRET);
+            chirp = new ChirpConnect(cordova.getActivity(), args.getString(0),args.getString(1));
+
+//            ChirpError error = chirp.setConfig(CHIRP_APP_CONFIG);
+            ChirpError error = chirp.setConfig(args.getString(2));
             if (error.getCode() == 0) {
                 callbackContext.success(error.getCode());
             } else {
@@ -131,5 +143,90 @@ public class ChripPlugin extends CordovaPlugin {
             }
         }
         return true;
+    }
+
+    @Override
+    public void onReceived(@Nullable byte[] bytes, int i) {
+
+        try {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("state", "onReceived");
+            jsonObject.put("data", new String(bytes));
+            jsonObject.put("stateCode", i);
+
+            context.success(jsonObject);
+        } catch (Exception ex) {
+            context.error(ex.getMessage());
+        }
+    }
+
+    @Override
+    public void onReceiving(int i) {
+        try {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("state", "onReceiving");
+            jsonObject.put("data", "");
+            jsonObject.put("stateCode", i);
+
+            context.success(jsonObject);
+        } catch (Exception ex) {
+            context.error(ex.getMessage());
+        }
+    }
+
+    @Override
+    public void onSending(@NotNull byte[] bytes, int i) {
+        try {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("state", "onSending");
+            jsonObject.put("data", new String(bytes));
+            jsonObject.put("stateCode", i);
+
+            context.success(jsonObject);
+        } catch (Exception ex) {
+            context.error(ex.getMessage());
+        }
+    }
+
+    @Override
+    public void onSent(@NotNull byte[] bytes, int i) {
+        try {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("state", "onSent");
+            jsonObject.put("data", new String(bytes));
+            jsonObject.put("stateCode", i);
+
+            context.success(jsonObject);
+        } catch (Exception ex) {
+            context.error(ex.getMessage());
+        }
+    }
+
+    @Override
+    public void onStateChanged(int i, int i1) {
+        try {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("state", "onStateChanged");
+            jsonObject.put("beforeStateCode", i);
+            jsonObject.put("afterStateCode", i1);
+
+            context.success(jsonObject);
+        } catch (Exception ex) {
+            context.error(ex.getMessage());
+        }
+    }
+
+    @Override
+    public void onSystemVolumeChanged(float v, float v1) {
+        try {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("state", "onSystemVolumeChanged");
+            jsonObject.put("volumeStateCode", v);
+            jsonObject.put("volumeStateCode", v1);
+
+            context.success(jsonObject);
+        } catch (Exception ex) {
+            context.error(ex.getMessage());
+        }
     }
 }
