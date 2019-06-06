@@ -22,6 +22,10 @@ cordova.define("chrip-outsystem-plugin.chripPlugin", function(require, exports, 
       cordova.exec(successCallback, errorCallback, 'ChripPlugin', 'registerAsReceiver');
     }
 
+  // Stop Chirp
+  ChripPlugin.prototype.stop= function(successCallback, errorCallback) {
+    cordova.exec(successCallback, errorCallback, 'ChripPlugin', 'stop');
+  }
   
   // Installation constructor that binds ToastyPlugin to window
   ChripPlugin.install = function() {
