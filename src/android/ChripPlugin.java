@@ -1,10 +1,8 @@
 package com.cordova.plugin;
-// The native Toast API
+
 
 import android.Manifest;
 import android.content.pm.PackageManager;
-import android.util.Log;
-import android.widget.Toast;
 
 import com.example.hello.R;
 
@@ -27,8 +25,6 @@ import io.chirp.connect.interfaces.ConnectEventListener;
 import io.chirp.connect.models.ChirpError;
 
 public class ChripPlugin extends CordovaPlugin implements ConnectEventListener {
-    private static final String SET_CONFIGRATION = "setConfigration";
-    private static final String CHECK_PERMISSION = "checkPermission";
     private static final String STOP_CHIRP = "stop";
     private static final String SEND_DATA = "sendData";
     private static final String REGISTER_AS_RECEIVER = "registerAsReceiver";
@@ -39,6 +35,7 @@ public class ChripPlugin extends CordovaPlugin implements ConnectEventListener {
 
     String[] permissions = {Manifest.permission.RECORD_AUDIO};
     CordovaWebView cordovaWebView;
+    String dataToSend;
 
     @Override
     public void initialize(CordovaInterface cordova, CordovaWebView webView) {
@@ -53,18 +50,13 @@ public class ChripPlugin extends CordovaPlugin implements ConnectEventListener {
         context = callbackContext;
 
         switch (action) {
-            case SET_CONFIGRATION:
-                setConfigration(callbackContext);
-                break;
-            case CHECK_PERMISSION:
-                checkPermission(callbackContext);
-                break;
             case STOP_CHIRP:
                 stopChirp(callbackContext);
                 break;
             case SEND_DATA:
                 try {
-                    sendData(callbackContext, args.getString(0));
+                    dataToSend = args.getString(0);
+                    checkPermission();
                 } catch (Exception ex) {
                     callbackContext.error(ex.getMessage());
                 }
@@ -93,55 +85,45 @@ public class ChripPlugin extends CordovaPlugin implements ConnectEventListener {
     }
 
     private void registerAsReceiver() {
+        if (chirp == null) {
+            chirp = new ChirpConnect(cordova.getActivity(), cordova.getActivity().getResources().getString(R.string.CHIRP_APP_SECRET), cordova.getActivity().getResources().getString(R.string.CHIRP_APP_KEY));
+            chirp.setConfig(cordova.getActivity().getResources().getString(R.string.CHIRP_APP_CONFIG));
+        }
         chirp.setListener(this);
+        
     }
 
-    private void sendData(CallbackContext callbackContext, String dataToSend) {
+    private void sendData() {
         try {
+            chirp = new ChirpConnect(cordova.getActivity(), cordova.getActivity().getResources().getString(R.string.CHIRP_APP_SECRET), cordova.getActivity().getResources().getString(R.string.CHIRP_APP_KEY));
+            ChirpError errorConfig = chirp.setConfig(cordova.getActivity().getResources().getString(R.string.CHIRP_APP_CONFIG));
+            if (errorConfig.getCode() != 0) {
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("Code", errorConfig.getCode());
+                jsonObject.put("Message", errorConfig.getMessage());
+                context.error(jsonObject);
+                return;
+            }
             byte[] payload = dataToSend.getBytes(Charset.forName("UTF-8"));
-
             ChirpError error = chirp.send(payload);
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("Code", error.getCode());
             jsonObject.put("Message", error.getMessage());
 
-            callbackContext.success(error.getCode());
+            context.success(jsonObject);
         } catch (Exception ex) {
-            callbackContext.error(ex.getMessage());
+            context.error(ex.getMessage());
         }
 
     }
 
-    private void checkPermission(CallbackContext callbackContext) {
+    private void checkPermission() {
 
         if (hasPermisssion()) {
-            PluginResult r = new PluginResult(PluginResult.Status.OK);
-            callbackContext.sendPluginResult(r);
+            sendData();
         } else {
             PermissionHelper.requestPermissions(this, 0, permissions);
         }
-    }
-
-    private void setConfigration(CallbackContext callbackContext) {
-
-        try {
-
-            //chirp = new ChirpConnect(cordova.getActivity(), CHIRP_APP_KEY, CHIRP_APP_SECRET);
-            chirp = new ChirpConnect(cordova.getActivity(), cordova.getActivity().getResources().getString(R.string.CHIRP_APP_SECRET), cordova.getActivity().getResources().getString(R.string.CHIRP_APP_KEY));
-
-//            ChirpError error = chirp.setConfig(CHIRP_APP_CONFIG);
-            ChirpError error = chirp.setConfig(cordova.getActivity().getResources().getString(R.string.CHIRP_APP_CONFIG));
-            if (error.getCode() == 0) {
-                callbackContext.success(error.getCode());
-            } else {
-                callbackContext.success(error.getCode());
-            }
-        } catch (Exception ex) {
-            callbackContext.error(ex.getMessage());
-
-        }
-
-
     }
 
 
@@ -158,8 +140,7 @@ public class ChripPlugin extends CordovaPlugin implements ConnectEventListener {
                 }
 
             }
-            result = new PluginResult(PluginResult.Status.OK);
-            context.sendPluginResult(result);
+            sendData();
         }
     }
 
@@ -245,7 +226,7 @@ public class ChripPlugin extends CordovaPlugin implements ConnectEventListener {
 
     @Override
     public void onSystemVolumeChanged(float v, float v1) {
-       //cordovaWebView.sendJavascript();
+        //cordovaWebView.sendJavascript();
         try {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("state", "onSystemVolumeChanged");

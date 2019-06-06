@@ -2,16 +2,6 @@ cordova.define("chrip-outsystem-plugin.chripPlugin", function(require, exports, 
   function ChripPlugin() {}
   
   // The function that passes work along to native shells
-  // Set Configration
-  ChripPlugin.prototype.setConfigration = function(successCallback, errorCallback) {
-    cordova.exec(successCallback, errorCallback, 'ChripPlugin', 'setConfigration');
-  }
-  
-  // Check Permissions
-  ChripPlugin.prototype.checkPermission= function(successCallback, errorCallback) {
-    cordova.exec(successCallback, errorCallback, 'ChripPlugin', 'checkPermission');
-  }
-  
   //Send Data
   ChripPlugin.prototype.sendData= function(dataToSend,successCallback, errorCallback) {
     cordova.exec(successCallback, errorCallback, 'ChripPlugin', 'sendData',[dataToSend]);
