@@ -161,87 +161,74 @@ public class ChripPlugin extends CordovaPlugin implements ConnectEventListener {
 
     @Override
     public void onReceived(@Nullable byte[] bytes, int i) {
+        cordova.getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                String data=new String(bytes);
 
-        try {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("state", "onReceived");
-            jsonObject.put("data", new String(bytes));
-            jsonObject.put("stateCode", i);
-
-            context.success(jsonObject);
-        } catch (Exception ex) {
-            context.error(ex.getMessage());
-        }
+                cordovaWebView.loadUrl("javascript:Callback('"+data+"','"+i+"');");
+            }
+        });
     }
 
     @Override
     public void onReceiving(int i) {
-        try {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("state", "onReceiving");
-            jsonObject.put("data", "");
-            jsonObject.put("stateCode", i);
-
-            context.success(jsonObject);
-        } catch (Exception ex) {
-            context.error(ex.getMessage());
-        }
+        cordova.getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                cordovaWebView.loadUrl("javascript:Callback('"+i+"','"+i+"');");
+            }
+        });
     }
 
     @Override
     public void onSending(@NotNull byte[] bytes, int i) {
-        try {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("state", "onSending");
-            jsonObject.put("data", new String(bytes));
-            jsonObject.put("stateCode", i);
 
-            context.success(jsonObject);
-        } catch (Exception ex) {
-            context.error(ex.getMessage());
-        }
+        cordova.getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                String data=new String(bytes);
+                
+                cordovaWebView.loadUrl("javascript:Callback('"+data+"','"+i+"');");
+            }
+        });
+
     }
 
     @Override
     public void onSent(@NotNull byte[] bytes, int i) {
-        try {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("state", "onSent");
-            jsonObject.put("data", new String(bytes));
-            jsonObject.put("stateCode", i);
+        cordova.getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                String data=new String(bytes);
 
-            context.success(jsonObject);
-        } catch (Exception ex) {
-            context.error(ex.getMessage());
-        }
+                cordovaWebView.loadUrl("javascript:Callback('"+data+"','"+i+"');");
+            }
+        });
+
     }
 
     @Override
     public void onStateChanged(int i, int i1) {
-        try {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("state", "onStateChanged");
-            jsonObject.put("beforeStateCode", i);
-            jsonObject.put("afterStateCode", i1);
+        cordova.getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                
+                cordovaWebView.loadUrl("javascript:Callback('"+i+"','"+i1+"');");
+            }
+        });
 
-            context.success(jsonObject);
-        } catch (Exception ex) {
-            context.error(ex.getMessage());
-        }
     }
 
     @Override
     public void onSystemVolumeChanged(float v, float v1) {
-        //cordovaWebView.sendJavascript();
-        try {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("state", "onSystemVolumeChanged");
-            jsonObject.put("volumeStateCode", v);
-            jsonObject.put("volumeStateCode", v1);
+        cordova.getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                cordovaWebView.loadUrl("javascript:Callback('"+v+"','"+v1+"');");
+            }
+        });
 
-            context.success(jsonObject);
-        } catch (Exception ex) {
-            context.error(ex.getMessage());
-        }
+        
     }
 }
