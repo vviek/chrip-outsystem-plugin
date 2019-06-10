@@ -109,7 +109,7 @@ public class ChripPlugin extends CordovaPlugin implements ConnectEventListener {
                 String CHIRP_APP_CONFIG= cordova.getActivity().getString(cordova.getActivity().getResources().getIdentifier( "CHIRP_APP_CONFIG", "string", cordova.getActivity().getPackageName()));
                 chirp = new ChirpConnect(cordova.getActivity(), CHIRP_APP_KEY, CHIRP_APP_SECRET);
                 ChirpError errorConfig = chirp.setConfig(CHIRP_APP_CONFIG);
-                Toast.makeText(cordova.getActivity(), CHIRP_APP_KEY, Toast.LENGTH_SHORT).show();
+                //Toast.makeText(cordova.getActivity(), CHIRP_APP_KEY, Toast.LENGTH_SHORT).show();
              /*   chirp = new ChirpConnect(cordova.getActivity(), cordova.getActivity().getResources().getString(R.string.CHIRP_APP_KEY), cordova.getActivity().getResources().getString(R.string.CHIRP_APP_SECRET));
                 ChirpError errorConfig = chirp.setConfig(cordova.getActivity().getResources().getString(R.string.CHIRP_APP_CONFIG));
                 */
@@ -122,6 +122,7 @@ public class ChripPlugin extends CordovaPlugin implements ConnectEventListener {
                     return;
                 }
             }
+            Toast.makeText(cordova.getActivity(),dataToSend, Toast.LENGTH_SHORT).show();
             byte[] payload = dataToSend.getBytes(Charset.forName("UTF-8"));
             ChirpError error = chirp.send(payload);
             JSONObject jsonObject = new JSONObject();
@@ -177,7 +178,7 @@ public class ChripPlugin extends CordovaPlugin implements ConnectEventListener {
             @Override
             public void run() {
                 String data=new String(bytes);
-
+                Toast.makeText(cordova.getActivity(),"onReceived"+data, Toast.LENGTH_SHORT).show();
                 cordovaWebView.loadUrl("javascript:Callback('"+data+"','"+i+"');");
             }
         });
@@ -188,6 +189,7 @@ public class ChripPlugin extends CordovaPlugin implements ConnectEventListener {
         cordova.getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                Toast.makeText(cordova.getActivity(),"onReceiving"+i, Toast.LENGTH_SHORT).show();
                 cordovaWebView.loadUrl("javascript:Callback('"+i+"','"+i+"');");
             }
         });
@@ -199,8 +201,9 @@ public class ChripPlugin extends CordovaPlugin implements ConnectEventListener {
         cordova.getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                String data=new String(bytes);
                 
+                String data=new String(bytes);
+                Toast.makeText(cordova.getActivity(),"onSending"+data, Toast.LENGTH_SHORT).show();
                 cordovaWebView.loadUrl("javascript:Callback('"+data+"','"+i+"');");
             }
         });
@@ -213,7 +216,7 @@ public class ChripPlugin extends CordovaPlugin implements ConnectEventListener {
             @Override
             public void run() {
                 String data=new String(bytes);
-
+                Toast.makeText(cordova.getActivity(),"onSent"+data, Toast.LENGTH_SHORT).show();
                 cordovaWebView.loadUrl("javascript:Callback('"+data+"','"+i+"');");
             }
         });
@@ -225,7 +228,7 @@ public class ChripPlugin extends CordovaPlugin implements ConnectEventListener {
         cordova.getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                
+                Toast.makeText(cordova.getActivity(),"onStateChanged "+i, Toast.LENGTH_SHORT).show();
                 cordovaWebView.loadUrl("javascript:Callback('"+i+"','"+i1+"');");
             }
         });
@@ -237,6 +240,7 @@ public class ChripPlugin extends CordovaPlugin implements ConnectEventListener {
         cordova.getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                Toast.makeText(cordova.getActivity(),"onSystemVolumeChanged "+v, Toast.LENGTH_SHORT).show();
                 cordovaWebView.loadUrl("javascript:Callback('"+v+"','"+v1+"');");
             }
         });
