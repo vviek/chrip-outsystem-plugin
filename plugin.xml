@@ -43,6 +43,7 @@
             </feature>
         </config-file>
       
+        <framework src="io.chirp:chirpsdk:3.8.+" />
         
         <framework src="src/android/chrip.gradle" custom="true" type="gradleReference"/>
 
