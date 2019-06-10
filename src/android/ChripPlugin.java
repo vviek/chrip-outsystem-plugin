@@ -3,8 +3,7 @@ package com.cordova.plugin;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
-
-import com.example.hello.R;
+import android.widget.Toast;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaInterface;
@@ -86,9 +85,16 @@ public class ChripPlugin extends CordovaPlugin implements ConnectEventListener {
 
     private void registerAsReceiver() {
         if (chirp == null) {
-            chirp = new ChirpConnect(cordova.getActivity(),cordova.getActivity().getResources().getString(R.string.CHIRP_APP_KEY), cordova.getActivity().getResources().getString(R.string.CHIRP_APP_SECRET) );
+            String CHIRP_APP_KEY= cordova.getActivity().getString(cordova.getActivity().getResources().getIdentifier("CHIRP_APP_KEY" , "string", cordova.getActivity().getPackageName()));
+            String CHIRP_APP_SECRET= cordova.getActivity().getString(cordova.getActivity().getResources().getIdentifier( "CHIRP_APP_SECRET", "string", cordova.getActivity().getPackageName()));
+            String CHIRP_APP_CONFIG= cordova.getActivity().getString(cordova.getActivity().getResources().getIdentifier( "CHIRP_APP_CONFIG", "string", cordova.getActivity().getPackageName()));
+            chirp.setConfig(CHIRP_APP_CONFIG);
+            chirp = new ChirpConnect(cordova.getActivity(),CHIRP_APP_KEY,CHIRP_APP_SECRET );
+         /*   chirp = new ChirpConnect(cordova.getActivity(),cordova.getActivity().getResources().getString(R.string.CHIRP_APP_KEY), cordova.getActivity().getResources().getString(R.string.CHIRP_APP_SECRET) );
+
+
             chirp.setConfig(cordova.getActivity().getResources().getString(R.string.CHIRP_APP_CONFIG));
-            chirp.start(true, true);
+            */chirp.start(true, true);
 
         }
         chirp.setListener(this);
@@ -98,10 +104,16 @@ public class ChripPlugin extends CordovaPlugin implements ConnectEventListener {
     private void sendData() {
         try {
             if (chirp == null) {
-
-                chirp = new ChirpConnect(cordova.getActivity(), cordova.getActivity().getResources().getString(R.string.CHIRP_APP_KEY), cordova.getActivity().getResources().getString(R.string.CHIRP_APP_SECRET));
+                String CHIRP_APP_KEY= cordova.getActivity().getString(cordova.getActivity().getResources().getIdentifier("CHIRP_APP_KEY" , "string", cordova.getActivity().getPackageName()));
+                String CHIRP_APP_SECRET= cordova.getActivity().getString(cordova.getActivity().getResources().getIdentifier( "CHIRP_APP_SECRET", "string", cordova.getActivity().getPackageName()));
+                String CHIRP_APP_CONFIG= cordova.getActivity().getString(cordova.getActivity().getResources().getIdentifier( "CHIRP_APP_CONFIG", "string", cordova.getActivity().getPackageName()));
+                chirp = new ChirpConnect(cordova.getActivity(), CHIRP_APP_KEY, CHIRP_APP_SECRET);
+                ChirpError errorConfig = chirp.setConfig(CHIRP_APP_CONFIG);
+                Toast.makeText(cordova.getActivity(), CHIRP_APP_KEY, Toast.LENGTH_SHORT).show();
+             /*   chirp = new ChirpConnect(cordova.getActivity(), cordova.getActivity().getResources().getString(R.string.CHIRP_APP_KEY), cordova.getActivity().getResources().getString(R.string.CHIRP_APP_SECRET));
                 ChirpError errorConfig = chirp.setConfig(cordova.getActivity().getResources().getString(R.string.CHIRP_APP_CONFIG));
-                chirp.start(true, true);
+                */
+             chirp.start(true, true);
                 if (errorConfig.getCode() != 0) {
                     JSONObject jsonObject = new JSONObject();
                     jsonObject.put("Code", errorConfig.getCode());
