@@ -179,7 +179,7 @@ public class ChripPlugin extends CordovaPlugin implements ConnectEventListener {
             public void run() {
                 String data=new String(bytes);
                 Toast.makeText(cordova.getActivity(),"onReceived"+data, Toast.LENGTH_SHORT).show();
-                cordovaWebView.loadUrl("javascript:Callback('"+data+"','"+i+"');");
+                cordovaWebView.loadUrl("javascript:onReceived('"+data+"','"+i+"');");
             }
         });
     }
@@ -190,7 +190,7 @@ public class ChripPlugin extends CordovaPlugin implements ConnectEventListener {
             @Override
             public void run() {
                 Toast.makeText(cordova.getActivity(),"onReceiving"+i, Toast.LENGTH_SHORT).show();
-                cordovaWebView.loadUrl("javascript:Callback('"+i+"','"+i+"');");
+                cordovaWebView.loadUrl("javascript:onReceiving('"+i+"');");
             }
         });
     }
@@ -204,7 +204,7 @@ public class ChripPlugin extends CordovaPlugin implements ConnectEventListener {
                 
                 String data=new String(bytes);
                 Toast.makeText(cordova.getActivity(),"onSending"+data, Toast.LENGTH_SHORT).show();
-                cordovaWebView.loadUrl("javascript:Callback('"+data+"','"+i+"');");
+                cordovaWebView.loadUrl("javascript:onSending('"+data+"','"+i+"');");
             }
         });
 
@@ -217,7 +217,7 @@ public class ChripPlugin extends CordovaPlugin implements ConnectEventListener {
             public void run() {
                 String data=new String(bytes);
                 Toast.makeText(cordova.getActivity(),"onSent"+data, Toast.LENGTH_SHORT).show();
-                cordovaWebView.loadUrl("javascript:Callback('"+data+"','"+i+"');");
+                cordovaWebView.loadUrl("javascript:onSent('"+data+"','"+i+"');");
             }
         });
 
@@ -229,7 +229,7 @@ public class ChripPlugin extends CordovaPlugin implements ConnectEventListener {
             @Override
             public void run() {
                 Toast.makeText(cordova.getActivity(),"onStateChanged "+i, Toast.LENGTH_SHORT).show();
-                cordovaWebView.loadUrl("javascript:Callback('"+i+"','"+i1+"');");
+                cordovaWebView.loadUrl("javascript:onStateChanged('"+i+"','"+i1+"');");
             }
         });
 
@@ -241,7 +241,7 @@ public class ChripPlugin extends CordovaPlugin implements ConnectEventListener {
             @Override
             public void run() {
                 Toast.makeText(cordova.getActivity(),"onSystemVolumeChanged "+v, Toast.LENGTH_SHORT).show();
-                cordovaWebView.loadUrl("javascript:Callback('"+v+"','"+v1+"');");
+                cordovaWebView.loadUrl("javascript:onSystemVolumeChanged('"+v+"','"+v1+"');");
             }
         });
 
