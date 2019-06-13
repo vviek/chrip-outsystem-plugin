@@ -88,13 +88,15 @@ public class ChripPlugin extends CordovaPlugin implements ConnectEventListener {
             String CHIRP_APP_KEY= cordova.getActivity().getString(cordova.getActivity().getResources().getIdentifier("CHIRP_APP_KEY" , "string", cordova.getActivity().getPackageName()));
             String CHIRP_APP_SECRET= cordova.getActivity().getString(cordova.getActivity().getResources().getIdentifier( "CHIRP_APP_SECRET", "string", cordova.getActivity().getPackageName()));
             String CHIRP_APP_CONFIG= cordova.getActivity().getString(cordova.getActivity().getResources().getIdentifier( "CHIRP_APP_CONFIG", "string", cordova.getActivity().getPackageName()));
-            chirp.setConfig(CHIRP_APP_CONFIG);
             chirp = new ChirpConnect(cordova.getActivity(),CHIRP_APP_KEY,CHIRP_APP_SECRET );
          /*   chirp = new ChirpConnect(cordova.getActivity(),cordova.getActivity().getResources().getString(R.string.CHIRP_APP_KEY), cordova.getActivity().getResources().getString(R.string.CHIRP_APP_SECRET) );
 
 
             chirp.setConfig(cordova.getActivity().getResources().getString(R.string.CHIRP_APP_CONFIG));
-            */chirp.start(true, true);
+            */
+            chirp.setConfig(CHIRP_APP_CONFIG);
+            
+            chirp.start(true, true);
 
         }
         chirp.setListener(this);
